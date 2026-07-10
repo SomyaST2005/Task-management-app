@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Task Management System{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    {% if session.user_id %}
+    <div class="app-layout">
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <h2>TMS</h2>
+                <p>Task Management</p>
+            </div>
+            <nav class="sidebar-nav">
+                {% if session.role == 'admin' %}
+                <a href="{{ url_for('admin.dashboard') }}" class="nav-link {{ 'active' if request.endpoint == 'admin.dashboard' }}">📊 Dashboard</a>
+                <a href="{{ url_for('employees.list') }}" class="nav-link {{ 'active' if request.endpoint == 'employees.list' }}">👥 Employees</a>
+                <a href="{{ url_for('employees.add') }}" class="nav-link {{ 'active' if request.endpoint == 'employees.add' }}">➕ Add Employee</a>
+                <a href="{{ url_for('tasks.list') }}" class="nav-link {{ 'active' if request.endpoint == 'tasks.list' }}">📋 All Tasks</a>
+                <a href="{{ url_for('tasks.add') }}" class="nav-link {{ 'active' if request.endpoint == 'tasks.add' }}">➕ Create Task</a>
+                {% else %}
+                <a href="{{ url_for('tasks.my_tasks') }}" class="nav-link {{ 'active' if request.endpoint == 'tasks.my_tasks' }}">📊 My Dashboard</a>
+                {% endif %}
+                <hr>
+                <a href="{{ url_for('auth.logout') }}" class="nav-link nav-logout">🚪 Logout</a>
+            </nav>
+        </aside>
+        <main class="main-content">
+            <header class="topbar">
+                <h3>{% block heading %}Dashboard{% endblock %}</h3>
+                <div class="user-info">
+                    <span>👤 {{ session.username }} ({{ session.role|capitalize }})</span>
+                </div>
+            </header>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                <div class="flash-messages" id="flash-messages">
+                    {% for category, message in messages %}
+                    <div class="flash-message flash-{{ category }}">
+                        <span>{{ message }}</span>
+                        <button class="flash-close" onclick="this.parentElement.remove()">&times;</button>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            {% endwith %}
+
+            <div class="content-area">
+                {% block content %}{% endblock %}
+            </div>
+        </main>
+    </div>
+
+    <div class="modal-overlay" id="confirm-modal" style="display:none;">
+        <div class="modal-box">
+            <h3>Confirm Action</h3>
+            <p id="confirm-message">Are you sure you want to delete this item?</p>
+            <form id="confirm-form" method="POST">
+                <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+            </form>
+        </div>
+    </div>
+
+    {% else %}
+    <div class="content-area" style="padding: 0;">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <div class="flash-messages auth-flash" id="flash-messages">
+                {% for category, message in messages %}
+                <div class="flash-message flash-{{ category }}">
+                    <span>{{ message }}</span>
+                    <button class="flash-close" onclick="this.parentElement.remove()">&times;</button>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        {% endwith %}
+        {% block fullpage %}{% endblock %}
+    </div>
+    {% endif %}
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

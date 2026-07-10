@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Login - Task Management System{% endblock %}
+{% block heading %}Login{% endblock %}
+
+{% block fullpage %}
+<div class="login-container">
+    <div class="login-card">
+        <div class="login-header">
+            <h1>Task Management System</h1>
+            <p>Sign in to your account</p>
+        </div>
+        <form method="POST" action="{{ url_for('auth.login') }}" class="login-form">
+            <div class="form-group">
+                <label for="username">Username or Email</label>
+                <input type="text" id="username" name="username" placeholder="Enter username or email" required autofocus>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Enter password" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block" id="login-btn">
+                <span class="btn-text">Sign In</span>
+                <span class="btn-loader" style="display:none;">Signing in...</span>
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Employees{% endblock %}
+{% block heading %}Employees{% endblock %}
+
+{% block content %}
+<div class="toolbar">
+    <form class="search-form" method="GET" action="{{ url_for('employees.list') }}">
+        <input type="text" name="search" placeholder="Search employees..." value="{{ search }}">
+        <button type="submit" class="btn btn-primary btn-sm">Search</button>
+        {% if search %}
+        <a href="{{ url_for('employees.list') }}" class="btn btn-secondary btn-sm">Clear</a>
+        {% endif %}
+    </form>
+    <a href="{{ url_for('employees.add') }}" class="btn btn-primary">+ Add Employee</a>
+</div>
+
+<div class="table-container">
+    {% if employees %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Code</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Department</th>
+                <th>Designation</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for emp in employees %}
+            <tr>
+                <td>{{ emp.id }}</td>
+                <td>{{ emp.employee_code }}</td>
+                <td>{{ emp.name }}</td>
+                <td>{{ emp.email }}</td>
+                <td>{{ emp.department }}</td>
+                <td>{{ emp.designation }}</td>
+                <td class="actions">
+                    <a href="{{ url_for('employees.edit', id=emp.id) }}" class="btn btn-sm btn-secondary">Edit</a>
+                    <button class="btn btn-sm btn-danger" onclick="confirmDelete('{{ emp.name }}', '{{ url_for('employees.delete', id=emp.id) }}')">Delete</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="empty-state">{% if search %}No employees found matching "{{ search }}".{% else %}No employees added yet.{% endif %}</p>
+    {% endif %}
+</div>
+{% endblock %}
